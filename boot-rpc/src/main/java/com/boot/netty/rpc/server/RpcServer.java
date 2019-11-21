@@ -24,6 +24,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 服务端
+ */
 @Component
 public class RpcServer implements ApplicationContextAware, InitializingBean {
 

@@ -25,7 +25,13 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    compile group: 'org.apache.commons',name: 'commons-collections4',version: '4.4'
     compile group: 'org.apache.zookeeper', name: 'zookeeper', version: '3.5.6'
+    compile group: 'com.dyuproject.protostuff', name: 'protostuff-core', version: '1.0.8'
+    compile group: 'com.dyuproject.protostuff', name: 'protostuff-runtime', version: '1.0.8'
+    compile group: 'org.objenesis', name: 'objenesis', version: '2.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.6'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.6'
 }
 
 test {

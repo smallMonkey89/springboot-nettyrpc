@@ -2,7 +2,12 @@ package com.boot.netty.rpc.server;
 
 import ch.qos.logback.classic.sift.AppenderFactoryUsingJoran;
 import com.boot.netty.rpc.annotation.RpcService;
+import com.boot.netty.rpc.protocal.RpcDecoder;
+import com.boot.netty.rpc.protocal.RpcEncoder;
+import com.boot.netty.rpc.protocal.RpcRequest;
+import com.boot.netty.rpc.protocal.RpcResponse;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -51,7 +56,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         start();
     }
 
-    private void start() {
+    private void start() throws InterruptedException {
         bossGroup = new NioEventLoopGroup(1);
         workgroup = new NioEventLoopGroup();
 
@@ -64,9 +69,23 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
+                                .addLast(new RpcDecoder(RpcRequest.class))
+                                .addLast(new RpcEncoder(RpcResponse.class))
                                 .addLast(new RpcHandler(rpcMap));
                     }
                 });
+
+        String[] array = serverAddress.split(":");
+        String host = array[0];
+        int port = Integer.parseInt(array[1]);
+
+        ChannelFuture future = bootstrap.bind(host, port).sync();
+
+        if(serviceRegistry != null){
+            serviceRegistry.register(serverAddress);
+        }
+
+        future.channel().closeFuture().sync();
 
     }
 
